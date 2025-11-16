@@ -1,0 +1,22 @@
+.brand-accent { color: #812f2b; }
+
+.sidebar {
+  background: #fff;
+  border-right: 2px solid #812f2b;
+}
+
+.sidebar .nav-link {
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.sidebar .nav-link.active,
+.sidebar .nav-link:hover {
+  color: #fff;
+  background: #812f2b;
+  border-radius: .25rem;
+}
+
+
