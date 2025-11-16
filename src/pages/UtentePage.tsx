@@ -4,9 +4,11 @@ import { supabase } from '../main';
 type Utente = {
   ut_cod: number;
   ut_nome: string;
+  ut_nif: string;
   ut_email: string;
-  ut_turma: string;
-  ut_ano: number;
+  ut_tlm: string;
+  ut_morada: string;
+  ut_cod_postal: string;
 };
 
 export default function UtentePage() {
@@ -28,9 +30,11 @@ export default function UtentePage() {
     const payload: Utente = {
       ut_cod: (form.ut_cod as number) ?? nextUtCod,
       ut_nome: (form.ut_nome as string) ?? '',
+      ut_nif: (form.ut_nif as string) ?? '',
       ut_email: (form.ut_email as string) ?? '',
-      ut_turma: (form.ut_turma as string) ?? '',
-      ut_ano: Number(form.ut_ano ?? 0)
+      ut_tlm: (form.ut_tlm as string) ?? '',
+      ut_morada: (form.ut_morada as string) ?? '',
+      ut_cod_postal: (form.ut_cod_postal as string) ?? '',
     };
     const { error } = await supabase.from('utente').insert(payload);
     if (!error) { setForm({}); load(); } else alert(error.message);
@@ -54,9 +58,11 @@ export default function UtentePage() {
       <tr>
         <td>{row.ut_cod}</td>
         <td>{editing ? (<input className="form-control form-control-sm" value={draft.ut_nome} onChange={e=>setDraft({...draft, ut_nome:e.target.value})} />) : row.ut_nome}</td>
+        <td>{editing ? (<input className="form-control form-control-sm" maxLength={9} value={draft.ut_nif} onChange={e=>setDraft({...draft, ut_nif:e.target.value})} />) : row.ut_nif}</td>
         <td>{editing ? (<input className="form-control form-control-sm" value={draft.ut_email} onChange={e=>setDraft({...draft, ut_email:e.target.value})} />) : row.ut_email}</td>
-        <td>{editing ? (<input className="form-control form-control-sm" value={draft.ut_turma} onChange={e=>setDraft({...draft, ut_turma:e.target.value})} />) : row.ut_turma}</td>
-        <td>{editing ? (<input className="form-control form-control-sm" inputMode="numeric" pattern="[0-9]{1,4}" value={draft.ut_ano} onChange={e=>setDraft({...draft, ut_ano:Number(e.target.value)})} />) : row.ut_ano}</td>
+        <td>{editing ? (<input className="form-control form-control-sm" maxLength={9} value={draft.ut_tlm} onChange={e=>setDraft({...draft, ut_tlm:e.target.value})} />) : row.ut_tlm}</td>
+        <td>{editing ? (<input className="form-control form-control-sm" value={draft.ut_morada} onChange={e=>setDraft({...draft, ut_morada:e.target.value})} />) : row.ut_morada}</td>
+        <td>{editing ? (<input className="form-control form-control-sm" value={draft.ut_cod_postal} onChange={e=>setDraft({...draft, ut_cod_postal:e.target.value})} />) : row.ut_cod_postal}</td>
         <td>
           <div className="d-flex align-items-center gap-1 flex-wrap">
             {editing ? (
@@ -91,16 +97,24 @@ export default function UtentePage() {
               <input className="form-control" required value={form.ut_nome ?? ''} onChange={e=>setForm({...form, ut_nome:e.target.value})} />
             </div>
             <div className="mb-3">
+              <label className="form-label">NIF</label>
+              <input className="form-control" maxLength={9} value={form.ut_nif ?? ''} onChange={e=>setForm({...form, ut_nif:e.target.value})} />
+            </div>
+            <div className="mb-3">
               <label className="form-label">Email</label>
               <input className="form-control" type="email" required value={form.ut_email ?? ''} onChange={e=>setForm({...form, ut_email:e.target.value})} />
             </div>
             <div className="mb-3">
-              <label className="form-label">Turma</label>
-              <input className="form-control" required value={form.ut_turma ?? ''} onChange={e=>setForm({...form, ut_turma:e.target.value})} />
+              <label className="form-label">Telemóvel</label>
+              <input className="form-control" maxLength={9} value={form.ut_tlm ?? ''} onChange={e=>setForm({...form, ut_tlm:e.target.value})} />
             </div>
             <div className="mb-3">
-              <label className="form-label">Ano</label>
-              <input className="form-control" inputMode="numeric" pattern="[0-9]{1,4}" title="Ano com até 4 dígitos" value={form.ut_ano ?? ''} onChange={e=>setForm({...form, ut_ano:Number(e.target.value)})} />
+              <label className="form-label">Morada</label>
+              <input className="form-control" value={form.ut_morada ?? ''} onChange={e=>setForm({...form, ut_morada:e.target.value})} />
+            </div>
+            <div className="mb-3">
+              <label className="form-label">Cód. Postal</label>
+              <input className="form-control" value={form.ut_cod_postal ?? ''} onChange={e=>setForm({...form, ut_cod_postal:e.target.value})} />
             </div>
             <button type="submit" className="btn w-100" style={{backgroundColor:'#812f2b', color:'#fff'}}><i className="bi bi-save me-2"/>Registar</button>
           </form>
@@ -116,17 +130,19 @@ export default function UtentePage() {
                 <tr>
                   <th>Código</th>
                   <th>Nome</th>
+                  <th>NIF</th>
                   <th>Email</th>
-                  <th>Turma</th>
-                  <th>Ano</th>
+                  <th>Telemóvel</th>
+                  <th>Morada</th>
+                  <th>Cód. Postal</th>
                   <th style={{width:'200px'}}>Ações</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
-                  <tr><td colSpan={6} className="text-center text-secondary">A carregar…</td></tr>
+                  <tr><td colSpan={7} className="text-center text-secondary">A carregar…</td></tr>
                 ) : items.length === 0 ? (
-                  <tr><td colSpan={6} className="text-center text-secondary">Nenhum utente registado.</td></tr>
+                  <tr><td colSpan={7} className="text-center text-secondary">Nenhum utente registado.</td></tr>
                 ) : (
                   items.map(it => <Row key={it.ut_cod} row={it} />)
                 )}
